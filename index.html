@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- ================================================================
+       METADATOS BÁSICOS
+       ================================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Algoritmo de Dijkstra paso a paso | Camino mínimo online</title>
+  <meta name="description" content="Camino mínimo en un grafo dirigido ponderado con Dijkstra: genera la matriz de 5 a 15 vértices, mira el grafo y sigue la tabla de etiquetas paso a paso.">
+  <meta name="keywords" content="algoritmo de Dijkstra, camino mínimo, ruta más corta, grafo ponderado, grafo dirigido, matriz de adyacencia, tabla de etiquetas, teoría de grafos, matemática computacional, calculadora Dijkstra, Dijkstra paso a paso">
+  <meta name="author" content="Grupo 4 – Matemática Computacional (1AMA0475-2620-2911), UPC">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="googlebot" content="index, follow">
+  <meta name="application-name" content="Dijkstra paso a paso">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- IMPORTANTE: reemplazar harold-11 por tu usuario de GitHub (ver README.md) -->
+  <link rel="canonical" href="https://harold-11.github.io/dijkstra-camino-minimo/">
+  <link rel="alternate" hreflang="es" href="https://harold-11.github.io/dijkstra-camino-minimo/">
+
+  <!-- Color de la barra del navegador en móviles -->
+  <meta name="theme-color" content="#f5f6fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- ================================================================
+       OPEN GRAPH (Facebook, WhatsApp, LinkedIn) Y TWITTER
+       ================================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_PE">
+  <meta property="og:site_name" content="Dijkstra paso a paso">
+  <meta property="og:title" content="Algoritmo de Dijkstra paso a paso – Camino mínimo en grafos">
+  <meta property="og:description" content="Genera un grafo dirigido ponderado, elige origen y destino, y observa cómo Dijkstra etiqueta cada vértice hasta encontrar la ruta más corta.">
+  <meta property="og:url" content="https://harold-11.github.io/dijkstra-camino-minimo/">
+  <meta property="og:image" content="https://harold-11.github.io/dijkstra-camino-minimo/assets/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Grafo dirigido con el camino mínimo resaltado por el algoritmo de Dijkstra">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Algoritmo de Dijkstra paso a paso – Camino mínimo en grafos">
+  <meta name="twitter:description" content="Calculadora visual del camino mínimo con tabla de etiquetas, iteración por iteración.">
+  <meta name="twitter:image" content="https://harold-11.github.io/dijkstra-camino-minimo/assets/og-image.png">
+
+  <!-- ================================================================
+       ÍCONOS Y MANIFIESTO
+       ================================================================ -->
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- ================================================================
+       FUENTES Y ESTILOS
+       ================================================================ -->
+  <!-- Cabinet Grotesk (Fontshare, licencia gratuita) para textos; JetBrains Mono para números y etiquetas -->
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap">
+  <!-- Estilos divididos por tema. El orden importa: cada archivo puede
+       sobrescribir a los anteriores (responsive.css siempre al final).
+       ?v=N: al cambiar CSS o JS, sube el número para que el navegador no
+       use la versión guardada -->
+  <link rel="stylesheet" href="css/base.css?v=3">
+  <link rel="stylesheet" href="css/controles.css?v=3">
+  <link rel="stylesheet" href="css/layout.css?v=3">
+  <link rel="stylesheet" href="css/calculadora.css?v=3">
+  <link rel="stylesheet" href="css/grafo.css?v=3">
+  <link rel="stylesheet" href="css/solucion.css?v=3">
+  <link rel="stylesheet" href="css/contenido.css?v=3">
+  <link rel="stylesheet" href="css/animaciones.css?v=3">
+  <link rel="stylesheet" href="css/responsive.css?v=3">
+
+  <!-- Aplica el tema guardado ANTES de pintar (evita parpadeo claro/oscuro) -->
+  <script>
+    document.documentElement.classList.add('js');
+    try {
+      var temaGuardado = localStorage.getItem('tema');
+      if (temaGuardado === 'light' || temaGuardado === 'dark') {
+        document.documentElement.setAttribute('data-theme', temaGuardado);
+      }
+    } catch (e) { /* sin almacenamiento disponible: se usa el tema del sistema */ }
+  </script>
+
+  <!-- ================================================================
+       DATOS ESTRUCTURADOS (schema.org) PARA BUSCADORES
+       ================================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://harold-11.github.io/dijkstra-camino-minimo/#app",
+        "name": "Dijkstra paso a paso – Calculadora de camino mínimo",
+        "url": "https://harold-11.github.io/dijkstra-camino-minimo/",
+        "description": "Aplicación web educativa que resuelve el problema del camino mínimo en grafos dirigidos ponderados con el algoritmo de Dijkstra, mostrando la tabla de etiquetas en cada iteración.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Cualquiera (navegador web)",
+        "inLanguage": "es",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PEN" },
+        "featureList": [
+          "Generación automática de la matriz de adyacencia ponderada",
+          "Ingreso manual e importación de la matriz desde texto",
+          "Visualización interactiva del grafo dirigido ponderado",
+          "Algoritmo de Dijkstra paso a paso con tabla de etiquetas",
+          "Reconstrucción de todos los caminos mínimos"
+        ],
+        "image": "https://harold-11.github.io/dijkstra-camino-minimo/assets/og-image.png",
+        "creator": {
+          "@type": "Organization",
+          "name": "Grupo 4 – Matemática Computacional (1AMA0475-2620-2911)",
+          "parentOrganization": { "@type": "CollegeOrUniversity", "name": "Universidad Peruana de Ciencias Aplicadas (UPC)" }
+        },
+        "dateModified": "2026-10-01",
+        "educationalLevel": "Universitario",
+        "audience": { "@type": "EducationalAudience", "educationalRole": "student" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Qué es el algoritmo de Dijkstra?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Es un algoritmo publicado por Edsger W. Dijkstra en 1959 que calcula la distancia mínima desde un vértice origen hacia los demás vértices de un grafo cuyas aristas tienen pesos no negativos." }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué significa una etiqueta como [3, D]₂?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Es [peso acumulado, de dónde proviene]ₖ, con el número de iteración como subíndice. En [3, D]₂: 3 es el peso acumulado desde el origen, D es el vértice del que proviene (su predecesor) y 2 es la iteración en que se asignó. Siguiendo el “de dónde proviene” desde el destino hasta el origen se reconstruye la ruta mínima." }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Dijkstra funciona con pesos negativos?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Al fijar siempre el vértice de menor acumulado, una arista negativa encontrada después podría reducir una distancia ya fijada. Para pesos negativos se usa, por ejemplo, el algoritmo de Bellman-Ford." }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué pasa si hay dos caminos con la misma distancia mínima?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Cuando un vértice recibe dos etiquetas con el mismo acumulado se conservan ambas, y al final el programa muestra todas las rutas de longitud mínima. Todas cuestan lo mismo, así que se puede elegir cualquiera: todas son una respuesta correcta. Por ejemplo, una empresa de reparto puede tomar una y dejar la otra como alternativa si una vía está cerrada." }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo se escribe la matriz de un grafo dirigido ponderado?",
+            "acceptedAnswer": { "@type": "Answer", "text": "La fila indica el vértice de salida y la columna el de llegada. La celda contiene el peso de la arista; si no hay arista se deja vacía o en 0, y la diagonal principal siempre es 0." }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué ocurre si no existe camino entre el origen y el destino?",
+            "acceptedAnswer": { "@type": "Answer", "text": "El destino nunca recibe una etiqueta y el programa indica que no hay un camino dirigido entre ambos vértices. Al generar la matriz, la opción “Garantizar que todos los vértices sean alcanzables desde A” asegura que exista camino desde A hacia cualquier otro vértice." }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Por qué el grafo no tiene ciclos?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Porque el proyecto trabaja con grafos dirigidos sin ciclos. Al generar la matriz al azar solo se crean aristas de un vértice a otro posterior (A → B, nunca B → A), por lo que nunca se puede volver a un vértice ya visitado. Al ingresar la matriz a mano, si un peso cerraría un ciclo, la celda se marca en rojo, el número no se acepta y el programa pide ingresar otro." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <a class="salto" href="#programa">Saltar al programa</a>
+
+  <!-- ================================================================
+       ENCABEZADO Y NAVEGACIÓN
+       ================================================================ -->
+  <!-- Barra de navegación flotante en forma de píldora -->
+  <header class="topbar" id="topbar">
+    <div class="topbar__interior">
+      <a class="marca" href="#inicio" aria-label="Dijkstra paso a paso, ir al inicio">
+        <svg class="marca__logo" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="9" fill="url(#g-logo)"/>
+          <path d="M8 22 L15 10 L24 17" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="8" cy="22" r="3.2" fill="#fff"/><circle cx="15" cy="10" r="3.2" fill="#fff"/><circle cx="24" cy="17" r="3.2" fill="#fde68a"/>
+          <defs><linearGradient id="g-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+        </svg>
+        <span class="marca__texto">Dijkstra<span class="marca__acento"> paso a paso</span></span>
+      </a>
+
+      <nav class="nav" aria-label="Secciones">
+        <a href="#conceptos">Teoría</a>
+        <a href="#programa">Programa</a>
+        <a href="#casos">Casos</a>
+        <a href="#faq">Preguntas</a>
+      </nav>
+
+      <button class="btn-icono tema" id="tema-toggle" type="button" aria-label="Cambiar entre tema claro y oscuro" title="Cambiar tema">
+        <svg class="tema__sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="tema__luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- ==============================================================
+         ATENCIÓN · HERO (Editorial Split): texto a la izquierda,
+         imagen a la derecha y mucho espacio negativo
+         ============================================================== -->
+    <section class="hero" aria-labelledby="titulo-principal">
+      <div class="hero__fondo" aria-hidden="true"></div>
+      <div class="contenedor hero__interior">
+        <div class="hero__texto">
+          <h1 id="titulo-principal">
+            Algoritmo de
+            <!-- Imagen en línea dentro del título: un mini grafo con su ruta -->
+            <span class="pildora-img" aria-hidden="true">
+              <svg viewBox="0 0 96 40"><path class="pildora-img__arista" d="M14 28 L38 12 L60 26 L84 14"/><path class="pildora-img__ruta" d="M14 28 L38 12 L60 26 L84 14"/><circle cx="14" cy="28" r="5"/><circle cx="38" cy="12" r="5"/><circle cx="60" cy="26" r="5"/><circle cx="84" cy="14" r="5"/></svg>
+            </span>
+            <span class="degradado">Dijkstra</span> paso a paso
+          </h1>
+          <p class="hero__lead">
+            Resuelve el problema del camino mínimo en un grafo dirigido, ponderado y sin ciclos: construye la matriz,
+            observa el grafo y sigue la tabla de etiquetas iteración por iteración.
+          </p>
+          <div class="hero__acciones">
+            <a class="btn btn--primario btn--grande" href="#programa">
+              Abrir la calculadora
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn--contraste btn--grande" href="#conceptos">Cómo funciona</a>
+          </div>
+        </div>
+
+        <!-- Imagen editorial: ciudad nocturna con un camino mínimo trazado encima -->
+        <figure class="hero__imagen" aria-hidden="true">
+          <div class="hero__foto"></div>
+          <svg viewBox="0 0 360 300" class="mini-grafo">
+            <g class="mini-grafo__aristas">
+              <path d="M60 150 L150 60"/><path d="M60 150 L150 240"/><path d="M150 60 L240 110"/>
+              <path d="M150 240 L240 110"/><path d="M150 240 L240 220"/><path d="M240 110 L310 170"/>
+              <path d="M240 220 L310 170"/><path d="M150 60 L150 240"/>
+            </g>
+            <path class="mini-grafo__ruta" d="M60 150 L150 240 L240 110 L310 170"/>
+            <g class="mini-grafo__pesos">
+              <text x="92" y="95">4</text><text x="92" y="215">1</text><text x="200" y="74">5</text>
+              <text x="182" y="170">2</text><text x="198" y="246">6</text><text x="286" y="128">3</text>
+              <text x="284" y="214">4</text><text x="136" y="154">2</text>
+            </g>
+            <g class="mini-grafo__nodos">
+              <g style="--d:0s"><circle cx="60" cy="150" r="17"/><text x="60" y="150">A</text></g>
+              <g style="--d:.5s"><circle cx="150" cy="240" r="17"/><text x="150" y="240">B</text></g>
+              <g style="--d:1s"><circle cx="240" cy="110" r="17"/><text x="240" y="110">C</text></g>
+              <g style="--d:1.5s"><circle cx="310" cy="170" r="17"/><text x="310" y="170">D</text></g>
+              <g class="mini-grafo__off"><circle cx="150" cy="60" r="17"/><text x="150" y="60">E</text></g>
+              <g class="mini-grafo__off"><circle cx="240" cy="220" r="17"/><text x="240" y="220">F</text></g>
+            </g>
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         OBJETIVO DEL PROYECTO (único; el mismo texto va en el informe)
+         ============================================================== -->
+    <section class="objetivo" id="objetivo" aria-labelledby="titulo-objetivo">
+      <div class="contenedor objetivo__interior reveal">
+        <h2 id="titulo-objetivo">Objetivo del proyecto</h2>
+        <p class="objetivo__texto">
+          Desarrollar una aplicación web que, a partir de la matriz de adyacencia ponderada de un
+          <strong>grafo dirigido y sin ciclos</strong> de 5 a 15 vértices, generada aleatoriamente o ingresada
+          por el usuario, determine el <strong>camino mínimo</strong> entre un vértice origen y un vértice destino
+          mediante el <strong>algoritmo de Dijkstra</strong>, mostrando la secuencia de vértices, el costo total
+          y el desarrollo paso a paso del método de etiquetado.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         INTERÉS · BENTO DE CONCEPTOS (4 columnas × 2 filas, sin huecos)
+         A (2×2) + B (2×1) + C (1×1) + D (1×1) = 4 + 2 + 1 + 1 = 8 celdas
+         ============================================================== -->
+    <section class="conceptos" id="conceptos" aria-labelledby="titulo-conceptos">
+      <div class="contenedor">
+        <header class="seccion__cabecera reveal">
+          <h2 id="titulo-conceptos">Cuatro ideas para entender el camino mínimo</h2>
+          <p class="seccion__lead">
+            Propuesto por Edsger W. Dijkstra en 1959, el algoritmo calcula la distancia mínima desde un
+            vértice origen hacia todos los demás en un grafo con pesos no negativos.
+          </p>
+        </header>
+
+        <div class="bento">
+          <article class="bento__card bento__card--a reveal">
+            <div class="bento__media" aria-hidden="true">
+              <table class="bento__matriz">
+                <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+                <tr><th>A</th><td class="d">—</td><td class="w">3</td><td class="w">1</td><td></td></tr>
+                <tr><th>B</th><td></td><td class="d">—</td><td></td><td class="w">1</td></tr>
+                <tr><th>C</th><td></td><td></td><td class="d">—</td><td class="w">2</td></tr>
+                <tr><th>D</th><td></td><td></td><td></td><td class="d">—</td></tr>
+              </table>
+            </div>
+            <h3>Grafo dirigido ponderado</h3>
+            <p>Vértices unidos por aristas con sentido (i → j) y un peso: distancia, tiempo o costo. Se guarda en una matriz n × n: la fila es el vértice de salida y la columna el de llegada.</p>
+          </article>
+
+          <article class="bento__card bento__card--b reveal">
+            <h3>Camino mínimo</h3>
+            <p>La sucesión de aristas del origen al destino cuya suma de pesos es la menor posible. Puede haber varias rutas con la misma longitud, y el programa las muestra todas.</p>
+            <div class="bento__ruta" aria-hidden="true">
+              <span>A</span><i></i><span>C</span><i></i><span>D</span><i></i><span>F</span><i></i><span>H</span>
+            </div>
+          </article>
+
+          <article class="bento__card bento__card--c reveal">
+            <p class="bento__grande" aria-hidden="true">[3, D]<sub>2</sub></p>
+            <h3>La etiqueta</h3>
+            <p>[peso acumulado, de dónde proviene] y, como subíndice, la iteración: aquí 3, D y 2.</p>
+          </article>
+
+          <article class="bento__card bento__card--d reveal">
+            <p class="bento__grande" aria-hidden="true">O(n²)</p>
+            <h3>Complejidad</h3>
+            <p>n iteraciones que recorren una fila de n valores. No admite pesos negativos.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         PROGRAMA: aplicación interactiva
+         ============================================================== -->
+    <section class="programa" id="programa" aria-labelledby="titulo-programa">
+      <div class="contenedor">
+        <header class="seccion__cabecera reveal">
+          <h2 id="titulo-programa">Calculadora del camino mínimo</h2>
+          <p class="seccion__lead">Sigue los cuatro pasos. Puedes volver a cualquiera en cualquier momento.</p>
+        </header>
+
+        <!-- Indicador de progreso de los 4 pasos -->
+        <nav class="stepper reveal" aria-label="Pasos del programa">
+          <ol>
+            <li class="stepper__item" data-paso="1"><a href="#card-config"><span class="stepper__num">1</span><span class="stepper__txt">Configurar</span></a></li>
+            <li class="stepper__item" data-paso="2"><a href="#card-matriz"><span class="stepper__num">2</span><span class="stepper__txt">Matriz</span></a></li>
+            <li class="stepper__item" data-paso="3"><a href="#card-grafo"><span class="stepper__num">3</span><span class="stepper__txt">Grafo</span></a></li>
+            <li class="stepper__item" data-paso="4"><a href="#card-solucion"><span class="stepper__num">4</span><span class="stepper__txt">Solución</span></a></li>
+          </ol>
+          <div class="stepper__barra" aria-hidden="true"><span id="stepper-progreso"></span></div>
+        </nav>
+
+        <div class="tablero">
+          <!-- ---------- PASO 1: CONFIGURACIÓN ---------- -->
+          <article class="card reveal" id="card-config" aria-labelledby="t-config">
+            <header class="card__cabecera">
+              <span class="card__num">1</span>
+              <div>
+                <h3 id="t-config">Configuración del grafo</h3>
+                <p class="card__sub">Número de vértices y forma de construir la matriz</p>
+              </div>
+            </header>
+
+            <div class="campo">
+              <label class="campo__label" for="n-valor">Número de vértices (n)</label>
+              <div class="contador">
+                <button class="contador__btn" id="n-menos" type="button" aria-label="Disminuir n">−</button>
+                <input class="contador__valor" id="n-valor" type="number" min="5" max="15" value="8" inputmode="numeric" aria-describedby="n-ayuda">
+                <button class="contador__btn" id="n-mas" type="button" aria-label="Aumentar n">+</button>
+              </div>
+              <input class="rango" id="n-rango" type="range" min="5" max="15" value="8" aria-label="Número de vértices">
+              <p class="campo__ayuda" id="n-ayuda">Entre 5 y 15 · Vértices: <strong id="n-rango-texto">A – H</strong></p>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Forma de construir la matriz">
+              <button class="tabs__btn" id="tab-auto" role="tab" type="button" aria-selected="true" aria-controls="panel-auto">Generación automática</button>
+              <button class="tabs__btn" id="tab-manual" role="tab" type="button" aria-selected="false" aria-controls="panel-manual" tabindex="-1">Ingreso manual</button>
+              <span class="tabs__indicador" aria-hidden="true"></span>
+            </div>
+
+            <div class="tabs__panel" id="panel-auto" role="tabpanel" aria-labelledby="tab-auto">
+              <div class="campo">
+                <label class="campo__label" for="densidad">Densidad de aristas <output id="densidad-valor" for="densidad">50 %</output></label>
+                <input class="rango" id="densidad" type="range" min="20" max="100" step="5" value="50">
+              </div>
+              <div class="campo campo--doble">
+                <div>
+                  <label class="campo__label" for="peso-min">Peso mínimo</label>
+                  <input class="entrada" id="peso-min" type="number" min="1" max="999" value="1" inputmode="numeric">
+                </div>
+                <div>
+                  <label class="campo__label" for="peso-max">Peso máximo</label>
+                  <input class="entrada" id="peso-max" type="number" min="1" max="999" value="20" inputmode="numeric">
+                </div>
+              </div>
+              <label class="check">
+                <input type="checkbox" id="garantizar" checked>
+                <span class="check__caja" aria-hidden="true"></span>
+                <span>Garantizar que todos los vértices sean alcanzables desde A</span>
+              </label>
+              <p class="campo__ayuda campo__ayuda--nota">El grafo se genera dirigido y <strong>sin ciclos</strong>: las aristas solo van de un vértice a uno de los 3 siguientes (A → B, C o D; nunca B → A ni A → H). Así la ruta mínima pasa por varios vértices.</p>
+              <button class="btn btn--primario btn--bloque" id="btn-generar" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 14h6v6h-6zM14 4l6 6M20 4l-6 6M4 14l6 6M10 14l-6 6"/></svg>
+                Generar matriz aleatoria
+              </button>
+            </div>
+
+            <div class="tabs__panel" id="panel-manual" role="tabpanel" aria-labelledby="tab-manual" hidden>
+              <p class="campo__ayuda">Crea una matriz vacía de n × n y escribe los pesos directamente en la tabla del paso 2.</p>
+              <p class="campo__ayuda campo__ayuda--nota">En estas resoluciones <strong>no se permiten ciclos</strong>. Si un peso cierra un ciclo, la celda se marca en rojo y no se acepta: ingresa otro número o déjala vacía.</p>
+              <button class="btn btn--primario btn--bloque" id="btn-vacia" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+                Crear matriz vacía
+              </button>
+              <details class="pegar">
+                <summary>Pegar matriz desde texto (Excel, PDF, bloc de notas)</summary>
+                <label class="campo__label" for="texto-matriz">Una fila por línea; valores separados por espacios, tabs o comas. Usa 0 o - para “sin arista”.</label>
+                <textarea class="entrada entrada--area" id="texto-matriz" rows="6" spellcheck="false" placeholder="0 3 1 0 0&#10;0 0 0 1 5&#10;0 0 0 2 0&#10;0 0 0 0 4&#10;0 0 0 0 0"></textarea>
+                <button class="btn btn--secundario btn--bloque" id="btn-importar" type="button">Importar matriz</button>
+              </details>
+            </div>
+
+          </article>
+
+          <!-- ---------- PASO 2: MATRIZ ---------- -->
+          <article class="card reveal" id="card-matriz" aria-labelledby="t-matriz">
+            <header class="card__cabecera">
+              <span class="card__num">2</span>
+              <div>
+                <h3 id="t-matriz">Matriz de adyacencia ponderada</h3>
+                <p class="card__sub">Fila = <strong>desde</strong> · Columna = <strong>hacia</strong> · Vacío o 0 = sin arista · Sin ciclos</p>
+              </div>
+              <span class="pildora" id="matriz-info" hidden></span>
+            </header>
+
+            <div class="vacio" id="matriz-vacia">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="8" width="48" height="48" rx="10"/><path d="M8 24h48M8 40h48M24 8v48M40 8v48"/></svg>
+              <p>Aún no hay matriz.<br>Genérala automáticamente o créala vacía en el ingreso manual.</p>
+            </div>
+
+            <div class="matriz" id="matriz-contenedor" hidden>
+              <div class="matriz__scroll">
+                <div class="matriz__grid" id="matriz-grid" role="grid" aria-label="Matriz de adyacencia ponderada"></div>
+              </div>
+              <p class="matriz__error" id="matriz-error" role="alert" hidden></p>
+              <p class="matriz__error" id="matriz-ciclo" role="alert" hidden></p>
+              <div class="card__acciones">
+                <button class="btn btn--suave" id="btn-limpiar" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+                  Vaciar
+                </button>
+                <button class="btn btn--suave" id="btn-copiar" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>
+                  Copiar como texto
+                </button>
+              </div>
+              <p class="campo__ayuda">Consejo: navega con las flechas del teclado y Enter. Los cambios se reflejan al instante en el grafo.</p>
+            </div>
+          </article>
+
+          <!-- ---------- PASO 3: GRAFO ---------- -->
+          <article class="card reveal" id="card-grafo" aria-labelledby="t-grafo">
+            <header class="card__cabecera">
+              <span class="card__num">3</span>
+              <div>
+                <h3 id="t-grafo">Grafo dirigido ponderado</h3>
+                <p class="card__sub">Toca un vértice para elegir el origen y luego el destino · Arrástralos para reacomodar</p>
+              </div>
+            </header>
+
+            <div class="controles-grafo">
+              <div class="campo campo--compacto">
+                <label class="campo__label" for="sel-origen">Origen</label>
+                <select class="entrada select" id="sel-origen" disabled><option value="">—</option></select>
+              </div>
+              <svg class="controles-grafo__flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <div class="campo campo--compacto">
+                <label class="campo__label" for="sel-destino">Destino</label>
+                <select class="entrada select" id="sel-destino" disabled><option value="">—</option></select>
+              </div>
+              <button class="btn btn--primario btn--resolver" id="btn-resolver" type="button" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"/></svg>
+                <span class="btn__texto">Resolver con Dijkstra</span>
+              </button>
+              <button class="btn-icono" id="btn-reorganizar" type="button" aria-label="Reorganizar vértices" title="Reorganizar vértices" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+              </button>
+            </div>
+
+            <div class="lienzo" id="lienzo">
+              <svg id="grafo-svg" class="grafo" role="img" aria-label="Grafo dirigido ponderado"></svg>
+              <div class="vacio vacio--lienzo" id="grafo-vacio">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="14" cy="32" r="6"/><circle cx="50" cy="16" r="6"/><circle cx="50" cy="48" r="6"/><path d="M20 30l24-12M20 34l24 12M50 22v20"/></svg>
+                <p>El grafo aparecerá aquí cuando construyas la matriz.</p>
+              </div>
+            </div>
+
+            <ul class="leyenda" aria-label="Leyenda de colores">
+              <li><span class="leyenda__punto leyenda__punto--etiquetado"></span>Etiquetado</li>
+              <li><span class="leyenda__punto leyenda__punto--fijo"></span>Fijado</li>
+              <li><span class="leyenda__punto leyenda__punto--actual"></span>En análisis</li>
+              <li><span class="leyenda__linea leyenda__linea--evaluada"></span>Arista evaluada</li>
+              <li><span class="leyenda__linea leyenda__linea--descartada"></span>Etiqueta tachada</li>
+              <li><span class="leyenda__linea leyenda__linea--camino"></span>Camino mínimo</li>
+            </ul>
+          </article>
+
+          <!-- ---------- PASO 4: SOLUCIÓN PASO A PASO ---------- -->
+          <article class="card reveal" id="card-solucion" aria-labelledby="t-solucion">
+            <header class="card__cabecera">
+              <span class="card__num">4</span>
+              <div>
+                <h3 id="t-solucion">Desarrollo paso a paso</h3>
+                <p class="card__sub">Algoritmo de Dijkstra con etiquetas [peso acumulado, de dónde proviene]</p>
+              </div>
+            </header>
+
+            <div class="vacio" id="sol-vacia">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="24"/><path d="M27 22l14 10-14 10z"/></svg>
+              <p>Elige un origen y un destino, y pulsa <strong>Resolver con Dijkstra</strong>.</p>
+            </div>
+
+            <div class="solucion" id="sol-contenido" hidden>
+              <div class="progreso">
+                <div class="progreso__texto"><span id="progreso-texto">Iteración 0</span><span id="progreso-contador">1 / 1</span></div>
+                <div class="progreso__barra"><span id="progreso-barra"></span></div>
+              </div>
+
+              <div class="reproductor" role="group" aria-label="Controles de la animación">
+                <button class="btn-icono" id="btn-inicio" type="button" aria-label="Ir al inicio" title="Inicio (Inicio)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M18 5 9 12l9 7z"/></svg>
+                </button>
+                <button class="btn-icono" id="btn-anterior" type="button" aria-label="Iteración anterior" title="Anterior (←)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                </button>
+                <button class="btn-icono btn-icono--play" id="btn-play" type="button" aria-label="Reproducir" title="Reproducir / pausar (Espacio)">
+                  <svg class="icono-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
+                  <svg class="icono-pausa" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                </button>
+                <button class="btn-icono" id="btn-siguiente" type="button" aria-label="Iteración siguiente" title="Siguiente (→)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+                </button>
+                <button class="btn-icono" id="btn-final" type="button" aria-label="Ir al resultado" title="Resultado (Fin)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5v14M6 5l9 7-9 7z"/></svg>
+                </button>
+                <label class="velocidad">
+                  <span class="sr-only">Velocidad</span>
+                  <select class="entrada select select--mini" id="velocidad">
+                    <option value="2200">Lento</option>
+                    <option value="1400" selected>Normal</option>
+                    <option value="700">Rápido</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="narracion" id="narracion" aria-live="polite"></div>
+              <div class="resultado" id="resultado" hidden></div>
+            </div>
+          </article>
+
+          <!-- ---------- TABLA DE ETIQUETAS ---------- -->
+          <article class="card card--completa reveal" id="card-tabla" aria-labelledby="t-tabla">
+            <header class="card__cabecera">
+              <span class="card__num card__num--icono" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>
+              </span>
+              <div>
+                <h3 id="t-tabla">Tabla de etiquetas</h3>
+                <p class="card__sub">Una columna por iteración · <span class="muestra muestra--fija">sombreada</span> = etiqueta fijada · <span class="muestra muestra--tachada">tachada</span> = etiqueta descartada</p>
+              </div>
+            </header>
+            <div class="vacio vacio--bajo" id="tabla-vacia">
+              <p>La tabla se completa a medida que avanzas en la solución.</p>
+            </div>
+            <div class="tabla-scroll" id="tabla-scroll" hidden>
+              <table class="tabla" id="tabla-etiquetas">
+                <caption class="sr-only">Etiquetas asignadas a cada vértice en cada iteración del algoritmo de Dijkstra</caption>
+              </table>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         DESEO · PROCEDIMIENTO
+         1) Párrafo central cuyas palabras se revelan con el scroll (GSAP scrub)
+         2) Pasos del algoritmo como tarjetas que se apilan al bajar (GSAP)
+         ============================================================== -->
+    <section class="procedimiento" id="procedimiento" aria-labelledby="titulo-procedimiento">
+      <div class="contenedor">
+        <p class="declaracion" data-revelar-texto>
+          La idea es sencilla: avanzar siempre hacia el vértice más cercano que todavía no está fijado,
+          anotar en cada vecino cuánto cuesta llegar y desde dónde, y nunca volver a mover una distancia
+          que ya quedó fijada.
+        </p>
+
+        <div class="procedimiento__grid">
+          <header class="procedimiento__cabecera">
+            <h2 id="titulo-procedimiento">El procedimiento de etiquetado, en cinco pasos</h2>
+            <p class="seccion__lead">Es el método que sigue la calculadora en cada iteración.</p>
+          </header>
+
+          <ol class="pila" data-pila>
+            <!-- Procedimiento ÚNICO: es exactamente el que ejecuta js/dijkstra.js
+                 y el que se describe en el informe -->
+            <li class="pila__carta">
+              <span class="pila__num">1</span>
+              <h3>Inicio</h3>
+              <p>El vértice origen recibe la etiqueta <span class="etq etq--fija">[0, –]<sub>0</sub></span>: acumulado 0, un guion porque no proviene de ningún vértice y subíndice 0 porque aún no hay iteraciones. Queda fijado.</p>
+            </li>
+            <li class="pila__carta">
+              <span class="pila__num">2</span>
+              <h3>Etiquetado</h3>
+              <p>Desde el último vértice fijado, cada vértice al que llega una flecha recibe la etiqueta <span class="etq">[peso acumulado, de dónde proviene]<sub>k</sub></span>. El peso acumulado es el del vértice fijado más el peso de la flecha, y el subíndice <em>k</em> es el número de iteración: cada vez que se vuelve a este paso, la iteración aumenta en 1 (la primera es 1, luego 2, luego 3…).</p>
+            </li>
+            <li class="pila__carta">
+              <span class="pila__num">3</span>
+              <h3>Comparación</h3>
+              <p>Si un vértice ya tenía una etiqueta y recibe otra desde un camino distinto, se comparan los dos pesos acumulados: se conserva la etiqueta menor y se <span class="etq etq--tachada">tacha</span> la mayor. Si son iguales, se conservan ambas: ese vértice tiene dos caminos mínimos.</p>
+            </li>
+            <li class="pila__carta">
+              <span class="pila__num">4</span>
+              <h3>Fijación</h3>
+              <p>Al terminar cada iteración, se revisan todos los vértices que tienen etiqueta pero aún no están fijados, y se fija el de menor peso acumulado: esa ya es su distancia mínima y no cambia. Por ejemplo, si B tiene 4 y D tiene 2, se fija D. Si dos vértices distintos empatan con el menor acumulado, se fija primero el que va antes en orden alfabético y el otro se fija en una iteración posterior (k + 1 o después), con el mismo acumulado. Desde el vértice fijado se etiqueta en la siguiente iteración.</p>
+            </li>
+            <li class="pila__carta">
+              <span class="pila__num">5</span>
+              <h3>Fin y ruta</h3>
+              <p>Se repiten los pasos 2 a 4, aumentando la iteración en 1 cada vez (k = 1, 2, 3…), hasta que no queden vértices etiquetados sin fijar. La distancia mínima es el acumulado del destino, y la ruta se lee de atrás hacia adelante: del destino a su predecesor, de este al suyo, hasta llegar al origen.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         APLICACIONES · ACORDEÓN HORIZONTAL
+         Franjas verticales que se expanden al pasar el cursor o al enfocar
+         ============================================================== -->
+    <section class="aplicaciones" id="aplicaciones" aria-labelledby="titulo-aplicaciones">
+      <div class="contenedor">
+        <header class="seccion__cabecera reveal">
+          <h2 id="titulo-aplicaciones">Aplicaciones en organizaciones del Perú</h2>
+          <p class="seccion__lead">
+            Cada aplicación parte de una organización real y de una necesidad que se modela como un grafo
+            dirigido ponderado: los puntos son vértices, las conexiones son aristas y el peso es el tiempo,
+            la distancia o la latencia. Son escenarios de aplicación propuestos por el equipo.
+          </p>
+        </header>
+
+        <!-- Rúbrica: al menos 3 aplicaciones, cada una contextualizada en una
+             empresa u organización e identificando una necesidad -->
+        <ul class="acordeon reveal">
+          <li class="acordeon__item acordeon__item--atu" tabindex="0">
+            <div class="acordeon__contenido">
+              <p class="acordeon__rubro">Transporte urbano</p>
+              <h3>ATU · Lima y Callao</h3>
+              <div class="acordeon__detalle">
+                <p><strong>Organización:</strong> Autoridad de Transporte Urbano para Lima y Callao (ATU).</p>
+                <p><strong>Necesidad:</strong> indicar al pasajero la combinación de rutas con menor tiempo de viaje entre dos paraderos.</p>
+                <p><strong>Modelo:</strong> paraderos = vértices; tramos con sentido de circulación = aristas; minutos de viaje = pesos.</p>
+              </div>
+            </div>
+          </li>
+          <li class="acordeon__item acordeon__item--olva" tabindex="0">
+            <div class="acordeon__contenido">
+              <p class="acordeon__rubro">Logística</p>
+              <h3>Olva Courier</h3>
+              <div class="acordeon__detalle">
+                <p><strong>Organización:</strong> Olva Courier, empresa peruana de mensajería y paquetería.</p>
+                <p><strong>Necesidad:</strong> definir la ruta de reparto de menor distancia desde un centro de distribución hasta la dirección del cliente.</p>
+                <p><strong>Modelo:</strong> centro de distribución, agencias y clientes = vértices; vías = aristas; kilómetros = pesos.</p>
+              </div>
+            </div>
+          </li>
+          <li class="acordeon__item acordeon__item--movistar" tabindex="0">
+            <div class="acordeon__contenido">
+              <p class="acordeon__rubro">Telecomunicaciones</p>
+              <h3>Movistar · Telefónica del Perú</h3>
+              <div class="acordeon__detalle">
+                <p><strong>Organización:</strong> Telefónica del Perú, operador de la marca Movistar.</p>
+                <p><strong>Necesidad:</strong> encaminar los datos entre dos nodos de su red por la ruta de menor latencia.</p>
+                <p><strong>Modelo:</strong> routers = vértices; enlaces = aristas; milisegundos de latencia = pesos.</p>
+              </div>
+            </div>
+          </li>
+          <li class="acordeon__item acordeon__item--samu" tabindex="0">
+            <div class="acordeon__contenido">
+              <p class="acordeon__rubro">Salud y emergencias</p>
+              <h3>SAMU · MINSA</h3>
+              <div class="acordeon__detalle">
+                <p><strong>Organización:</strong> Sistema de Atención Móvil de Urgencias (SAMU) del Ministerio de Salud.</p>
+                <p><strong>Necesidad:</strong> encontrar el recorrido más rápido de la ambulancia hasta la emergencia y luego hasta el hospital.</p>
+                <p><strong>Modelo:</strong> base, cruces y hospitales = vértices; calles con sentido de tránsito = aristas; minutos = pesos.</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         CASOS RESUELTOS · CARRUSEL
+         Cada caso se puede cargar directamente en la calculadora.
+         Las diapositivas las genera js/ui.js a partir de Matriz.CASOS.
+         ============================================================== -->
+    <section class="casos" id="casos" aria-labelledby="titulo-casos">
+      <div class="contenedor">
+        <div class="casos__cabecera">
+          <header class="seccion__cabecera reveal">
+            <h2 id="titulo-casos">Casos para practicar</h2>
+            <p class="seccion__lead">Cuatro grafos que muestran las situaciones típicas: ruta única, empates, varias rutas mínimas y destino inalcanzable.</p>
+          </header>
+          <div class="casos__flechas">
+            <button class="btn-icono" id="caso-anterior" type="button" aria-label="Caso anterior">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+            </button>
+            <button class="btn-icono" id="caso-siguiente" type="button" aria-label="Caso siguiente">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="carrusel reveal" aria-roledescription="carrusel" aria-label="Casos resueltos">
+          <div class="carrusel__pista" id="carrusel-pista"></div>
+        </div>
+        <div class="carrusel__puntos" id="carrusel-puntos" role="tablist" aria-label="Elegir caso"></div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         PREGUNTAS FRECUENTES
+         ============================================================== -->
+    <section class="faq" id="faq" aria-labelledby="titulo-faq">
+      <div class="contenedor contenedor--estrecho">
+        <header class="seccion__cabecera reveal">
+          <h2 id="titulo-faq">Preguntas frecuentes</h2>
+        </header>
+        <div class="faq__lista">
+          <details class="faq__item reveal">
+            <summary>¿Qué es el algoritmo de Dijkstra?</summary>
+            <p>Es un algoritmo publicado por Edsger W. Dijkstra en 1959 que calcula la distancia mínima desde un vértice origen hacia los demás vértices de un grafo cuyas aristas tienen pesos no negativos.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>¿Qué significa una etiqueta como [3, D]<sub>2</sub>?</summary>
+            <p>Es <span class="etq">[peso acumulado, de dónde proviene]<sub>k</sub></span>, con el número de iteración como subíndice. En <span class="etq">[3, D]<sub>2</sub></span>: 3 es el peso acumulado desde el origen, D es el vértice del que proviene (su predecesor) y 2 es la iteración en que se asignó. Siguiendo el “de dónde proviene” desde el destino hasta el origen se reconstruye la ruta mínima.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>¿Dijkstra funciona con pesos negativos?</summary>
+            <p>No. Al fijar siempre el vértice de menor acumulado, una arista negativa encontrada después podría reducir una distancia ya fijada. Para pesos negativos se usa, por ejemplo, el algoritmo de Bellman-Ford.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>¿Qué pasa si hay dos caminos con la misma distancia mínima?</summary>
+            <p>Cuando un vértice recibe dos etiquetas con el mismo acumulado se conservan ambas, y al final el programa muestra todas las rutas de longitud mínima. Todas cuestan lo mismo, así que se puede elegir cualquiera: todas son una respuesta correcta. Por ejemplo, una empresa de reparto puede tomar una y dejar la otra como alternativa si una vía está cerrada.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>¿Cómo se escribe la matriz de un grafo dirigido ponderado?</summary>
+            <p>La fila indica el vértice de salida y la columna el de llegada. La celda contiene el peso de la arista; si no hay arista se deja vacía o en 0, y la diagonal principal siempre es 0.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>¿Qué ocurre si no existe camino entre el origen y el destino?</summary>
+            <p>El destino nunca recibe una etiqueta y el programa indica que no hay un camino dirigido entre ambos vértices. Al generar la matriz, la opción “Garantizar que todos los vértices sean alcanzables desde A” asegura que exista camino desde A hacia cualquier otro vértice.</p>
+          </details>
+          <details class="faq__item reveal">
+            <summary>¿Por qué el grafo no tiene ciclos?</summary>
+            <p>Porque el proyecto trabaja con grafos dirigidos sin ciclos. Al generar la matriz al azar solo se crean aristas de un vértice a otro posterior (A → B, nunca B → A), por lo que nunca se puede volver a un vértice ya visitado. Al ingresar la matriz a mano, si un peso cerraría un ciclo, la celda se marca en rojo, el número no se acepta y el programa pide ingresar otro.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         ACCIÓN · LLAMADO FINAL DE ALTO CONTRASTE
+         ============================================================== -->
+    <section class="accion" aria-labelledby="titulo-accion">
+      <div class="contenedor">
+        <div class="accion__panel reveal">
+          <h2 id="titulo-accion">
+            Del grafo
+            <span class="pildora-img pildora-img--foto" aria-hidden="true"></span>
+            a la ruta más corta, en segundos.
+          </h2>
+          <div class="accion__botones">
+            <a class="btn btn--claro btn--grande" href="#programa">
+              Resolver mi grafo
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <button class="btn btn--borde-claro btn--grande" id="btn-ejemplo-final" type="button">Ver un ejemplo resuelto</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================================================
+       PIE DE PÁGINA
+       (agregar aquí los nombres de los integrantes del equipo)
+       ================================================================ -->
+  <footer class="pie">
+    <div class="contenedor pie__interior">
+      <div>
+        <p><strong>Proyecto académico · Grupo 4 · Matemática Computacional</strong></p>
+        <p>Universidad Peruana de Ciencias Aplicadas (UPC) · 1AMA0475-2620-2911 · Ciclo 2026-2</p>
+      </div>
+      <nav class="pie__enlaces" aria-label="Enlaces del pie">
+        <a href="#conceptos">Teoría</a>
+        <a href="#programa">Programa</a>
+        <a href="#procedimiento">Procedimiento</a>
+        <a href="#casos">Casos</a>
+        <a href="#faq">Preguntas</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Notificaciones -->
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <noscript>
+    <div class="noscript">Este programa necesita JavaScript activado para funcionar.</div>
+  </noscript>
+
+  <!-- ================================================================
+       SCRIPTS
+       GSAP + ScrollTrigger solo animan las secciones de presentación.
+       Si no hay internet no se cargan y la página funciona igual.
+       ================================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="js/matriz.js?v=4" defer></script>
+  <script src="js/dijkstra.js?v=4" defer></script>
+  <script src="js/grafo.js?v=4" defer></script>
+  <script src="js/ui.js?v=4" defer></script>
+  <script src="js/movimiento.js?v=4" defer></script>
+</body>
+</html>

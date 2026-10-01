@@ -1,0 +1,292 @@
+/* =====================================================================
+   solucion.css
+   Solución paso a paso y tabla de etiquetas.
+   Se carga en el orden de index.html (el orden importa: los archivos
+   posteriores pueden sobrescribir a los anteriores).
+
+   Secciones:
+     12. Solución paso a paso (reproductor, narración, resultado)
+    13. Tabla de etiquetas
+   ===================================================================== */
+
+/* =====================================================================
+   12. SOLUCIÓN PASO A PASO
+   ===================================================================== */
+.solucion { display: grid; gap: 16px; animation: panel-entrar var(--t-enter) var(--ease-out); }
+
+.progreso__texto {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+.progreso__texto span:last-child { color: var(--muted); font-family: var(--mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.progreso__barra { height: 8px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+.progreso__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--grad-marca);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 300ms var(--ease-in-out);
+}
+
+.reproductor { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.velocidad { margin-left: auto; }
+.btn-icono--play {
+  position: relative;
+  width: 52px; height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--grad-boton);
+  color: #fff;
+  box-shadow: var(--shadow-primary);
+}
+.btn-icono--play:active:not(:disabled) { transform: scale(0.94); }
+/* Cambio play y pausa: escala + opacidad + blur para que se lea como una sola transformación */
+.btn-icono--play svg {
+  position: absolute;
+  fill: currentColor;
+  stroke: currentColor;
+  transition: transform var(--t) var(--ease-out), opacity var(--t-fast) ease, filter var(--t-fast) ease;
+}
+.btn-icono--play .icono-pausa { fill: none; stroke-width: 3; opacity: 0; transform: scale(0.7); filter: blur(3px); }
+.btn-icono--play.reproduciendo .icono-play { opacity: 0; transform: scale(0.7); filter: blur(3px); }
+.btn-icono--play.reproduciendo .icono-pausa { opacity: 1; transform: none; filter: blur(0); }
+.btn-icono--play::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  opacity: 0;
+  pointer-events: none;
+}
+.btn-icono--play.reproduciendo::before { animation: pulso-anillo 1.6s var(--ease-out) infinite; }
+
+.narracion {
+  min-height: 150px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: 0.94rem;
+}
+/* Cascada corta (≤ 60 ms entre elementos) al cambiar de iteración */
+.narracion > * { animation: narrar 260ms var(--ease-out) backwards; }
+.narracion > *:nth-child(2) { animation-delay: 40ms; }
+.narracion > *:nth-child(3) { animation-delay: 80ms; }
+.narracion > *:nth-child(4) { animation-delay: 120ms; }
+.narracion > *:nth-child(5) { animation-delay: 160ms; }
+.narracion__titulo {
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.narracion p + p, .narracion ul + p { margin-top: 10px; }
+.narracion ul { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.narracion li {
+  position: relative;
+  padding: 8px 12px 8px 28px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  line-height: 1.75;
+  animation: narrar 260ms var(--ease-out) backwards;
+  animation-delay: calc(80ms + var(--k, 0) * 45ms);
+}
+.narracion li::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 18px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.narracion li.li--mejora::before { background: var(--ok); }
+.narracion li.li--empate::before { background: var(--path); }
+.narracion li.li--descarta::before { background: var(--danger); }
+.narracion .calc { font-family: var(--mono); font-size: 0.86rem; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.narracion .elige {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--text);
+}
+
+/* Pasos navegados con el teclado: sin animación (se repiten muchas veces) */
+.instante, .instante *, .instante *::before, .instante *::after { animation: none !important; }
+
+/* Etiquetas en línea: [3, C]₂ */
+.etq {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 7px;
+  background: var(--surface-3);
+  font-family: var(--mono);
+  font-size: 0.84em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.etq--nueva { background: var(--accent-soft); color: var(--accent); }
+.etq--fija { background: var(--primary-soft); color: var(--primary); }
+.etq--tachada { background: var(--danger-soft); color: var(--danger); text-decoration: line-through; }
+.etq--camino { background: var(--path-soft); color: var(--path-strong); }
+.v { font-weight: 700; color: var(--text); }
+
+/* Tarjeta del resultado final (momento poco frecuente: admite algo de deleite) */
+.resultado {
+  position: relative;
+  overflow: hidden;
+  padding: 22px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--path), #f472b6, var(--primary)) border-box;
+  animation: resultado-entrar 400ms var(--ease-out);
+}
+.resultado::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 80% at 100% 0%, var(--path-soft), transparent 70%);
+  pointer-events: none;
+}
+.resultado__fila { position: relative; display: grid; gap: 16px; }
+.resultado__costo { display: flex; align-items: baseline; gap: 14px; }
+.resultado__etq { color: var(--muted); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.resultado__numero {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(135deg, var(--path-strong), #db2777);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.resultado__rutas { position: relative; display: grid; gap: 10px; }
+.ruta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ruta__v {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--path);
+  color: #111827;
+  font-weight: 800;
+  box-shadow: 0 4px 12px -3px var(--path);
+  animation: nodo-entrar 300ms var(--ease-out) backwards;
+  animation-delay: calc(var(--k) * 50ms + 150ms);
+}
+.ruta__f {
+  width: 14px; height: 14px;
+  fill: none; stroke: var(--path-strong); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  animation: aparecer 240ms var(--ease-out) backwards;
+  animation-delay: calc(var(--k) * 50ms + 180ms);
+}
+.resultado__nota { position: relative; margin-top: 14px; color: var(--text-2); font-size: 0.9rem; }
+.resultado__eleccion { position: relative; margin-top: 10px; color: var(--text-2); font-size: 0.88rem; line-height: 1.45; }
+.resultado--sin-camino {
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--danger), var(--primary)) border-box;
+}
+.resultado--sin-camino .resultado__numero { background: none; color: var(--danger); }
+.distancias { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.distancias__item {
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+.distancias__item--destino { border-color: var(--path); background: var(--path-soft); }
+
+/* =====================================================================
+   13. TABLA DE ETIQUETAS
+   ===================================================================== */
+.tabla-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  scrollbar-width: thin;
+  animation: panel-entrar var(--t-enter) var(--ease-out);
+}
+.tabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.87rem;
+  font-variant-numeric: tabular-nums;
+}
+.tabla th, .tabla td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.tabla tr > *:last-child { border-right: 0; }
+.tabla tbody tr:last-child > * { border-bottom: 0; }
+.tabla thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+.tabla thead small { display: block; color: var(--muted); font-weight: 500; font-size: 0.72rem; }
+.tabla tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 60px;
+  background: var(--surface-2);
+  font-family: var(--mono);
+  font-size: 0.95rem;
+}
+.tabla thead th:first-child { left: 0; z-index: 2; }
+.tabla .fila--origen th { color: var(--origin); }
+.tabla .fila--destino th { color: var(--target); }
+.tabla .fila--camino th { background: var(--path-soft); }
+
+.tabla .col--actual { background: var(--primary-soft); }
+.tabla thead .col--actual { color: var(--primary); }
+.tabla .col--nueva { animation: columna-entrar 280ms var(--ease-out) backwards; }
+.tabla .col--resultado { background: var(--path-soft); font-weight: 700; }
+
+.celda-etq { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tabla .etq { position: relative; font-size: 0.82rem; }
+.tabla .etq--tachada { text-decoration: none; }
+.tabla .etq--tachada::after {
+  content: '';
+  position: absolute;
+  left: 3px; right: 3px; top: 50%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--danger);
+  transform-origin: left;
+}
+/* El tachado se "dibuja" de izquierda a derecha solo en la iteración en que ocurre */
+.tabla .etq--tachar::after { animation: tachar 300ms var(--ease-out) 120ms backwards; }
+.tabla .etq--fija { background: var(--primary); color: var(--primary-contrast); box-shadow: 0 2px 8px -2px var(--primary); }
+.tabla .etq--recien { animation: aparecer-escala 240ms var(--ease-out) backwards; }
+.tabla .inf { color: var(--muted); }
+
+/* Muestras dentro del subtítulo */
+.muestra { padding: 0 6px; border-radius: 5px; font-weight: 600; }
+.muestra--fija { background: var(--primary); color: var(--primary-contrast); }
+.muestra--tachada { background: var(--danger-soft); color: var(--danger); text-decoration: line-through; }
