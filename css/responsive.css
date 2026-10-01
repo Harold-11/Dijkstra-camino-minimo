@@ -1,0 +1,97 @@
+/* =====================================================================
+   responsive.css
+   Diseño adaptable y movimiento reducido.
+   Se carga en el orden de index.html (el orden importa: los archivos
+   posteriores pueden sobrescribir a los anteriores).
+
+   Secciones:
+     18. Diseño adaptable (responsive) y movimiento reducido
+   ===================================================================== */
+
+/* =====================================================================
+   18. RESPONSIVE Y MOVIMIENTO REDUCIDO
+   ===================================================================== */
+@media (max-width: 1180px) {
+  #card-config { grid-column: span 5; }
+  #card-matriz { grid-column: span 7; }
+  #card-grafo, #card-solucion { grid-column: 1 / -1; }
+}
+
+@media (max-width: 1024px) {
+  .hero__interior { grid-template-columns: 1fr; }
+  .hero__imagen { max-width: 560px; width: 100%; aspect-ratio: 5 / 4; }
+  #card-config, #card-matriz, #card-grafo, #card-solucion { grid-column: 1 / -1; }
+  /* Bento 2 × 3: A(2×1) + B(2×1) + C(1×1) + D(1×1) = 6 celdas, sin huecos */
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bento__card--a { grid-column: span 2; grid-row: span 1; }
+  .procedimiento__grid { grid-template-columns: 1fr; }
+  .procedimiento__cabecera { position: static; }
+  /* Acordeón: en pantallas táctiles se convierte en tarjetas verticales */
+  .acordeon { flex-direction: column; height: auto; }
+  .acordeon__item, .acordeon__item:hover, .acordeon__item:focus-visible { flex: none; min-height: 220px; }
+  /* En pantallas angostas cada organización es una tarjeta con todo su contenido visible */
+  .acordeon__item, .acordeon__item:hover, .acordeon__item:focus-visible { min-height: 340px; }
+  .acordeon .acordeon__item :is(.acordeon__detalle, .acordeon__rubro) { display: grid !important; }
+  .acordeon .acordeon__item .acordeon__rubro { display: block !important; }
+  .acordeon .acordeon__item .acordeon__contenido h3 { writing-mode: horizontal-tb !important; transform: none !important; white-space: normal; }
+  .caso { grid-template-columns: 1fr; flex-basis: 92%; }
+  .caso__vista { min-height: 240px; }
+}
+
+@media (max-width: 720px) {
+  .nav { display: none; }
+  .tema { margin-left: auto; }
+  .card { padding: 18px; border-radius: var(--radius); }
+  .card__cabecera { flex-wrap: wrap; }
+  .pildora { margin-left: 50px; }
+  /* Bento en una columna: cada tarjeta ocupa una fila completa */
+  .bento { grid-template-columns: 1fr; }
+  .bento__card--a, .bento__card--b, .bento__card--c, .bento__card--d { grid-column: auto; }
+  .casos__cabecera { flex-direction: column; align-items: stretch; }
+  .casos__flechas { display: none; }
+  .accion__panel { border-radius: 28px; }
+  .pila__carta { padding: 24px; }
+  .stepper__txt { font-size: 0.75rem; }
+  .stepper__num { width: 34px; height: 34px; }
+  .stepper__barra { top: 16px; }
+  .controles-grafo { gap: 10px; }
+  .controles-grafo__flecha { display: none; }
+  .controles-grafo .campo--compacto { flex: 1 1 calc(50% - 5px); min-width: 0; }
+  .controles-grafo .select { min-width: 0; width: 100%; }
+  .btn--resolver { flex: 1 1 auto; margin-left: 0; }
+  .matriz__grid { --celda: 40px; }
+  .reproductor { justify-content: center; }
+  .velocidad { margin-left: 0; }
+  .narracion { padding: 14px; }
+  .resultado__numero { font-size: 2.1rem; }
+  /* En una sola columna no tiene sentido escalonar */
+  .js .reveal { transition-delay: 0ms !important; }
+}
+
+@media (max-width: 400px) {
+  .marca__acento { display: none; }
+  .hero__acciones .btn { width: 100%; }
+}
+
+/* Movimiento reducido: menos movimiento, no cero. Se conservan los
+   fundidos de opacidad y color (ayudan a entender), se elimina todo
+   desplazamiento, escala, rotación y bucle. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-name: aparecer !important;
+    animation-duration: 200ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+  }
+  .hero__fondo, .pildora-img__ruta, .mini-grafo__ruta, .mini-grafo__nodos circle,
+  .nodo__anillo, .nodo__halo, .arista--evaluada, .stepper__num::after,
+  .btn-icono--play::before, .btn--resolver::after { animation: none !important; }
+  .mini-grafo__ruta, .pildora-img__ruta { stroke-dashoffset: 0; }
+  .carrusel__pista, .acordeon__item, .pila__carta { transition: none; }
+  .js .reveal { transform: none; transition: opacity 300ms ease; }
+  .btn:active:not(:disabled), .btn-icono:active:not(:disabled), .tabs__btn:active,
+  .nodo:active .nodo__cuerpo, .nodo--arrastrando .nodo__cuerpo { transform: none; }
+  .tabs__indicador, .stepper__barra span, .progreso__barra span, .tema svg { transition-property: opacity; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+}

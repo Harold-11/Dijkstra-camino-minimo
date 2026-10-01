@@ -1,0 +1,100 @@
+/* =====================================================================
+   animaciones.css
+   Animaciones y estados hover.
+   Se carga en el orden de index.html (el orden importa: los archivos
+   posteriores pueden sobrescribir a los anteriores).
+
+   Secciones:
+     16. Animaciones (keyframes) y aparición al hacer scroll
+    17. Hover solo con puntero fino
+   ===================================================================== */
+
+/* =====================================================================
+   16. ANIMACIONES (KEYFRAMES) Y APARICIÓN AL HACER SCROLL
+   ===================================================================== */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+.js .reveal.visible { opacity: 1; transform: none; }
+/* Escalonado en el bento (60 ms entre tarjetas) */
+.bento > .reveal:nth-child(2) { transition-delay: 60ms; }
+.bento > .reveal:nth-child(3) { transition-delay: 120ms; }
+.bento > .reveal:nth-child(4) { transition-delay: 180ms; }
+
+@keyframes aparecer { from { opacity: 0; } }
+@keyframes aparecer-escala { from { opacity: 0; transform: scale(0.92); } }
+@keyframes subir { from { opacity: 0; transform: translateY(12px); } }
+@keyframes panel-entrar { from { opacity: 0; transform: translateY(6px); } }
+@keyframes narrar { from { opacity: 0; transform: translateX(-6px); } }
+@keyframes flotar { 50% { transform: translateY(-6px); } }
+@keyframes fondo-flotar { to { transform: translate3d(3%, 4%, 0) scale(1.05); } }
+@keyframes rebote { 40% { transform: scale(1.08); } }
+@keyframes girar { to { transform: rotate(360deg); } }
+@keyframes check-entrar { from { opacity: 0; transform: translateY(-2px) rotate(-45deg) scale(0.6); } }
+@keyframes celda-entrar { from { opacity: 0; transform: scale(0.94); } }
+@keyframes arista-entrar { from { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.3; } to { stroke-dasharray: 1; stroke-dashoffset: 0; } }
+@keyframes nodo-entrar { from { opacity: 0; transform: scale(0.9); } }
+@keyframes nodo-fijar { 40% { transform: scale(1.12); } }
+@keyframes halo { from { opacity: 0.5; transform: scale(1); } to { opacity: 0; transform: scale(2.2); } }
+@keyframes pulso-anillo { from { opacity: 0.7; transform: scale(0.95); } to { opacity: 0; transform: scale(1.3); } }
+@keyframes invitar { 0% { opacity: 0.9; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.06); } }
+@keyframes destello { 0% { opacity: 0.9; } 100% { opacity: 0; } }
+@keyframes flujo { to { stroke-dashoffset: -0.085; } }
+@keyframes camino-trazar { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes columna-entrar { from { opacity: 0; transform: translateX(-8px); } }
+@keyframes tachar { from { transform: scaleX(0); } }
+@keyframes resultado-entrar { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
+@keyframes tema-salir { to { opacity: 0; filter: blur(2px); } }
+@keyframes tema-entrar { from { opacity: 0; filter: blur(2px); } }
+@keyframes ruta-dibujar {
+  0% { stroke-dashoffset: 420; }
+  45%, 80% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes nodo-encender {
+  0%, 8% { fill: #111a2e; stroke: rgb(255 255 255 / 0.5); }
+  15%, 80% { fill: #fbbf24; stroke: #f59e0b; }
+  100% { fill: #111a2e; stroke: rgb(255 255 255 / 0.5); }
+}
+@keyframes pildora-ruta {
+  0% { stroke-dashoffset: 100; }
+  50%, 80% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* =====================================================================
+   17. HOVER SOLO CON PUNTERO FINO
+   En pantallas táctiles el "hover" se dispara al tocar y queda pegado,
+   por eso todos los efectos de hover viven aquí.
+   ===================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  .btn--primario:hover:not(:disabled)::before { opacity: 1; }
+  .btn--primario:hover:not(:disabled) svg { transform: translateX(2px); }
+  .btn--secundario:hover:not(:disabled) { --btn-bg: rgb(91 94 240 / 0.2); }
+  .btn--fantasma:hover:not(:disabled) { border-color: var(--primary); --btn-color: var(--primary); background: var(--primary-soft); }
+  .btn--suave:hover:not(:disabled) { border-color: var(--border-strong); --btn-bg: var(--surface-3); }
+  .btn-icono:hover:not(:disabled) { color: var(--primary); border-color: var(--primary); background: var(--primary-soft); }
+  .btn-icono--play:hover:not(:disabled) { color: #fff; background: var(--grad-boton); }
+  .entrada:hover:not(:disabled):not(:focus) { border-color: var(--muted); }
+  .contador__btn:hover:not(:disabled) { background: var(--primary-soft); color: var(--primary); }
+  .celda:hover:not(:disabled):not(:focus) { border-color: var(--border-strong); }
+  .nav a:hover { color: var(--text); background: var(--surface-2); }
+  .marca:hover .marca__logo { transform: rotate(-6deg); }
+  .stepper__item a:hover .stepper__num { border-color: var(--primary); }
+  .pegar summary:hover, .faq__item summary:hover { color: var(--primary); }
+  .btn--contraste:hover:not(:disabled) { opacity: 0.88; }
+  .btn--claro:hover:not(:disabled) { --btn-bg: #e8ecf6; }
+  .btn--borde-claro:hover:not(:disabled) { border-color: #ffffff; --btn-bg: rgb(255 255 255 / 0.08); }
+  .bento__card:hover { border-color: var(--border-strong); }
+  .pie__enlaces a:hover { color: var(--text); }
+  /* Física de hover en imágenes (secciones de presentación): escala 1.05
+     lenta dentro de un contenedor con overflow oculto */
+  .hero__imagen:hover .hero__foto,
+  .bento__card--a:hover .bento__media,
+  .acordeon__item:hover::before,
+  .caso--activo:hover .caso__vista svg { transform: scale(1.05); }
+  .nodo:hover .nodo__cuerpo { transform: scale(1.06); }
+  .nodo:active .nodo__cuerpo { transform: scale(0.96); }
+}

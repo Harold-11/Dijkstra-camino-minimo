@@ -1,0 +1,189 @@
+/* =====================================================================
+   controles.css
+   Botones y controles de formulario.
+   Se carga en el orden de index.html (el orden importa: los archivos
+   posteriores pueden sobrescribir a los anteriores).
+
+   Secciones:
+     3. Botones y controles de formulario
+   ===================================================================== */
+
+/* =====================================================================
+   3. BOTONES Y CONTROLES DE FORMULARIO
+   Todo elemento presionable responde con scale(0.97) en :active.
+   ===================================================================== */
+.btn {
+  --btn-bg: var(--surface-2);
+  --btn-color: var(--text);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  cursor: pointer;
+  isolation: isolate;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    transform var(--t-press) var(--ease-out),
+    background-color var(--t-fast) ease,
+    border-color var(--t-fast) ease,
+    color var(--t-fast) ease,
+    opacity var(--t) ease;
+}
+.btn svg {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  flex: none;
+  transition: transform var(--t) var(--ease-out);
+}
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn--primario {
+  --btn-color: #fff;
+  background: var(--grad-boton);
+  box-shadow: var(--shadow-primary);
+}
+/* Capa de brillo que aparece con opacidad (no se anima la sombra) */
+.btn--primario::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.14));
+  opacity: 0;
+  transition: opacity var(--t-fast) ease;
+}
+
+.btn--secundario {
+  --btn-bg: var(--primary-soft);
+  --btn-color: var(--primary);
+}
+
+.btn--fantasma {
+  --btn-bg: transparent;
+  border-color: var(--border-strong);
+}
+
+.btn--suave {
+  --btn-bg: var(--surface-2);
+  border-color: var(--border);
+  font-size: 0.88rem;
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
+.btn--grande { min-height: 52px; padding: 14px 26px; font-size: 1rem; border-radius: 14px; }
+.btn--bloque { width: 100%; }
+
+.btn-icono {
+  display: inline-grid;
+  place-items: center;
+  width: 42px; height: 42px;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--t-press) var(--ease-out),
+    background-color var(--t-fast) ease,
+    border-color var(--t-fast) ease,
+    color var(--t-fast) ease;
+}
+.btn-icono svg {
+  width: 20px; height: 20px;
+  fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.btn-icono:active:not(:disabled) { transform: scale(0.95); }
+.btn-icono:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.entrada {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+.entrada:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.entrada:disabled { opacity: 0.55; cursor: not-allowed; }
+.entrada--area { font-family: var(--mono); font-size: 0.85rem; resize: vertical; min-height: 130px; line-height: 1.5; }
+
+.select {
+  appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 18px;
+}
+.select--mini { min-height: 42px; width: auto; font-size: 0.88rem; }
+
+.rango {
+  --pct: 50%;
+  width: 100%;
+  height: 26px;
+  margin: 6px 0 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.rango::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--primary) var(--pct), var(--surface-3) var(--pct));
+}
+.rango::-moz-range-track { height: 6px; border-radius: 99px; background: var(--surface-3); }
+.rango::-moz-range-progress { height: 6px; border-radius: 99px; background: var(--primary); }
+.rango::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px; height: 20px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--primary);
+  box-shadow: var(--shadow);
+  transition: transform var(--t-press) var(--ease-out);
+}
+.rango::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--primary);
+  box-shadow: var(--shadow);
+}
+.rango:active::-webkit-slider-thumb { transform: scale(1.12); }
+.rango:focus-visible { outline: none; }
+.rango:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px var(--primary-soft); }
+
+.pildora {
+  margin-left: auto;
+  align-self: center;
+  padding: 5px 11px;
+  border-radius: 99px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 650;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
