@@ -307,7 +307,7 @@ const Grafo = (() => {
   /* ---------------------------------------------------------------
      9. Estado de una iteración de Dijkstra
      --------------------------------------------------------------- */
-  const CLASES_NODO = ['nodo--etiquetado', 'nodo--fijo', 'nodo--actual', 'nodo--elegido', 'nodo--camino', 'nodo--inalcanzable'];
+  const CLASES_NODO = ['nodo--etiquetado', 'nodo--fijo', 'nodo--actual', 'nodo--camino', 'nodo--inalcanzable'];
   const CLASES_ARISTA = ['arista--arbol', 'arista--evaluada', 'arista--descartada', 'arista--camino', 'arista--atenuada'];
 
   /**
@@ -315,7 +315,6 @@ const Grafo = (() => {
    * @param {Set<number>} paso.fijos        vértices fijados
    * @param {Set<number>} paso.etiquetados  vértices con etiqueta vigente
    * @param {number|null} paso.actual       vértice cuyos adyacentes se etiquetan
-   * @param {number|null} paso.elegido      vértice que se fija al final de la iteración
    * @param {string[]}    paso.badges       texto de la etiqueta de cada vértice ('' = oculta)
    * @param {Array}       paso.evaluadas    [{i, j, resultado}]
    * @param {Array}       paso.arbol        [[i, j]] aristas de predecesores vigentes
@@ -332,7 +331,6 @@ const Grafo = (() => {
       if (paso.etiquetados?.has(v)) cl.add('nodo--etiquetado');
       if (paso.fijos?.has(v)) cl.add('nodo--fijo');
       if (paso.actual === v) cl.add('nodo--actual');
-      if (paso.elegido === v) cl.add('nodo--elegido');
       if (paso.enCamino?.has(v)) cl.add('nodo--camino');
       if (paso.inalcanzables?.has(v)) cl.add('nodo--inalcanzable');
 

@@ -291,7 +291,6 @@ const Matriz = (() => {
     generarAleatoria, buscarCiclo,
     validarCelda, contarAristas, pesoMaximo,
     desdeTexto, aTexto,
-    EJEMPLO_CURSO,
     CASOS,
   };
 })();
