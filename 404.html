@@ -17,19 +17,19 @@
   </script>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <!-- Solo los estilos que usa esta página: tokens, base y botones -->
-  <link rel="stylesheet" href="css/base.css?v=3">
-  <link rel="stylesheet" href="css/controles.css?v=3">
+  <link rel="stylesheet" href="css/base.css?v=8">
+  <link rel="stylesheet" href="css/controles.css?v=8">
   <style>
     /* Estilos propios de la página 404 */
     .error404 { min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 24px; }
-    .error404__codigo { font-size: clamp(5rem, 18vw, 9rem); font-weight: 800; line-height: 1; letter-spacing: -0.05em; }
+    .error404__codigo { color: var(--primary); font-size: clamp(5rem, 18vw, 9rem); font-weight: 800; line-height: 1; }
     .error404 p { margin: 12px 0 28px; color: var(--muted); }
   </style>
 </head>
 <body>
   <main class="error404">
     <div>
-      <p class="error404__codigo degradado">404</p>
+      <p class="error404__codigo">404</p>
       <h1>No existe un camino hasta esta página</h1>
       <p>Su distancia es ∞: ningún enlace conduce aquí.</p>
       <a class="btn btn--primario btn--grande" href="./">Volver al inicio</a>

@@ -105,7 +105,7 @@ const Dijkstra = (() => {
 
   /* ---------------------------------------------------------------
      2. Estado de la tabla en una iteración k
-        (para la animación paso a paso)
+        (para mostrar la solución paso a paso)
      --------------------------------------------------------------- */
 
   /**
