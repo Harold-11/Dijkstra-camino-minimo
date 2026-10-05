@@ -19,7 +19,6 @@ const Grafo = (() => {
   let nodos = [];              // [{g, cuerpo, circulo, badge, badgeRect, badgeTexto, tag}]
   let alSeleccionar = null;    // callback al hacer clic en un vértice
   let arrastre = null;
-  let temporizadorEntrada = null;
 
   /* ---------------------------------------------------------------
      2. Utilidades SVG
@@ -70,18 +69,6 @@ const Grafo = (() => {
       }, defs);
       crear('path', { d: 'M0,1 L9.5,5 L0,9 L2.2,5 Z', class: `flecha flecha--${estado}` }, marcador);
     });
-
-    // Filtro de brillo para el camino mínimo. Se usa userSpaceOnUse porque
-    // una arista horizontal o vertical tiene caja de alto/ancho 0 y, con
-    // unidades relativas, el filtro la haría desaparecer.
-    const filtro = crear('filter', {
-      id: 'brillo', filterUnits: 'userSpaceOnUse',
-      x: 0, y: 0, width: ANCHO, height: ALTO,
-    }, defs);
-    crear('feGaussianBlur', { stdDeviation: 3.5, result: 'difuso' }, filtro);
-    const mezcla = crear('feMerge', {}, filtro);
-    crear('feMergeNode', { in: 'difuso' }, mezcla);
-    crear('feMergeNode', { in: 'SourceGraphic' }, mezcla);
 
     capaAristas = crear('g', { class: 'capa-aristas' }, svg);
     capaPesos = crear('g', { class: 'capa-pesos' }, svg);
@@ -150,9 +137,9 @@ const Grafo = (() => {
   /**
    * @param {number[][]} matriz
    * @param {string[]} listaNombres
-   * @param {{animar?: boolean, reiniciarPosiciones?: boolean}} opciones
+   * @param {{reiniciarPosiciones?: boolean}} opciones
    */
-  function dibujar(matriz, listaNombres, { animar = true, reiniciarPosiciones = false } = {}) {
+  function dibujar(matriz, listaNombres, { reiniciarPosiciones = false } = {}) {
     const n = matriz.length;
     nombres = listaNombres;
     if (reiniciarPosiciones || posiciones.length !== n) posiciones = distribucionPorColumnas(n);
@@ -163,10 +150,8 @@ const Grafo = (() => {
     aristas = [];
     mapaAristas = new Map();
     nodos = [];
-    svg.classList.toggle('grafo--animar', animar);
 
     // 5.1 Aristas (una por cada celda con peso > 0)
-    let orden = 0;
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
         const peso = matriz[i][j];
@@ -176,11 +161,10 @@ const Grafo = (() => {
           class: 'arista',
           'marker-end': 'url(#flecha-base)',
           pathLength: 1,
-          style: `--i:${Math.min(orden, 30)}`, // escalonado con tope: nunca más de ~0,4 s
         }, capaAristas);
         crear('title', {}, path).textContent = `${nombres[i]} → ${nombres[j]}: ${peso}`;
 
-        const grupoPeso = crear('g', { class: 'peso', style: `--i:${Math.min(orden, 30)}` }, capaPesos);
+        const grupoPeso = crear('g', { class: 'peso' }, capaPesos);
         const texto = String(peso);
         const ancho = 12 + texto.length * 7.6;
         crear('rect', { x: -ancho / 2, y: -10.5, width: ancho, height: 21, rx: 10.5 }, grupoPeso);
@@ -189,7 +173,6 @@ const Grafo = (() => {
         const arista = { i, j, peso, reciproca: matriz[j][i] > 0, path, grupoPeso };
         aristas.push(arista);
         mapaAristas.set(`${i}-${j}`, arista);
-        orden++;
       }
     }
 
@@ -201,8 +184,7 @@ const Grafo = (() => {
         role: 'button',
         'aria-label': `Vértice ${nombres[v]}`,
       }, capaNodos);
-      const cuerpo = crear('g', { class: 'nodo__cuerpo', style: `--i:${v}` }, g);
-      crear('circle', { class: 'nodo__halo', r: R_NODO }, cuerpo);
+      const cuerpo = crear('g', { class: 'nodo__cuerpo' }, g);
       crear('circle', { class: 'nodo__anillo', r: R_NODO + 6 }, cuerpo);
       const circulo = crear('circle', { class: 'nodo__circulo', r: R_NODO }, cuerpo);
       crear('text', { class: 'nodo__nombre', 'text-anchor': 'middle', 'dominant-baseline': 'central' }, cuerpo)
@@ -221,13 +203,6 @@ const Grafo = (() => {
     }
 
     actualizarGeometria();
-
-    // Al terminar la animación de entrada se quita la clase para que no
-    // interfiera con las animaciones de la resolución
-    clearTimeout(temporizadorEntrada);
-    if (animar) {
-      temporizadorEntrada = setTimeout(() => svg.classList.remove('grafo--animar'), 1200);
-    }
   }
 
   /* ---------------------------------------------------------------
@@ -263,45 +238,10 @@ const Grafo = (() => {
     });
   }
 
-  /**
-   * Curva ease-in-out fuerte, cubic-bezier(0.77, 0, 0.175, 1): la misma que
-   * --ease-in-out del CSS. Es la adecuada para objetos que se desplazan
-   * dentro de la pantalla. Se resuelve por bisección sobre x(t).
-   */
-  function easeInOut(x) {
-    const bez = (t, a, b) => 3 * a * t * (1 - t) ** 2 + 3 * b * t * t * (1 - t) + t ** 3;
-    let lo = 0;
-    let hi = 1;
-    for (let k = 0; k < 20; k++) {
-      const mid = (lo + hi) / 2;
-      if (bez(mid, 0.77, 0.175) < x) lo = mid; else hi = mid;
-    }
-    return bez((lo + hi) / 2, 0, 1);
-  }
-
-  /** Vuelve a la distribución original en columnas (con transición suave). */
+  /** Vuelve a la distribución original en columnas. */
   function reorganizar() {
-    const destino = distribucionPorColumnas(posiciones.length);
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      posiciones = destino;
-      actualizarGeometria();
-      return;
-    }
-    const inicio = posiciones.map((p) => ({ ...p }));
-    const t0 = performance.now();
-    const duracion = 450;
-
-    const paso = (ahora) => {
-      const t = Math.min(1, (ahora - t0) / duracion);
-      const e = easeInOut(t);
-      posiciones = inicio.map((p, i) => ({
-        x: p.x + (destino[i].x - p.x) * e,
-        y: p.y + (destino[i].y - p.y) * e,
-      }));
-      actualizarGeometria();
-      if (t < 1) requestAnimationFrame(paso);
-    };
-    requestAnimationFrame(paso);
+    posiciones = distribucionPorColumnas(posiciones.length);
+    actualizarGeometria();
   }
 
   /* ---------------------------------------------------------------
@@ -383,8 +323,6 @@ const Grafo = (() => {
    * @param {Set<number>} paso.enCamino     vértices del camino mínimo
    */
   function mostrarPaso(paso) {
-    clearTimeout(temporizadorEntrada);
-    svg.classList.remove('grafo--animar');
     limpiarPaso();
     const hayCamino = paso.camino && paso.camino.length > 0;
 
