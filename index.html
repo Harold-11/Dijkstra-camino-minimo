@@ -63,14 +63,14 @@
        sobrescribir a los anteriores (responsive.css siempre al final).
        ?v=N: al cambiar CSS o JS, sube el número para que el navegador no
        use la versión guardada -->
-  <link rel="stylesheet" href="css/base.css?v=8">
-  <link rel="stylesheet" href="css/controles.css?v=8">
-  <link rel="stylesheet" href="css/layout.css?v=8">
-  <link rel="stylesheet" href="css/calculadora.css?v=8">
-  <link rel="stylesheet" href="css/grafo.css?v=8">
-  <link rel="stylesheet" href="css/solucion.css?v=8">
-  <link rel="stylesheet" href="css/contenido.css?v=8">
-  <link rel="stylesheet" href="css/responsive.css?v=8">
+  <link rel="stylesheet" href="css/base.css?v=9">
+  <link rel="stylesheet" href="css/controles.css?v=9">
+  <link rel="stylesheet" href="css/layout.css?v=9">
+  <link rel="stylesheet" href="css/calculadora.css?v=9">
+  <link rel="stylesheet" href="css/grafo.css?v=9">
+  <link rel="stylesheet" href="css/solucion.css?v=9">
+  <link rel="stylesheet" href="css/contenido.css?v=9">
+  <link rel="stylesheet" href="css/responsive.css?v=9">
 
   <!-- ================================================================
        DATOS ESTRUCTURADOS (schema.org) PARA BUSCADORES
@@ -128,7 +128,6 @@
       </a>
       <nav class="nav" aria-label="Secciones">
         <a href="#objetivo">Objetivo</a>
-        <a href="#conceptos">Teoría</a>
         <a href="#programa">Programa</a>
         <a href="#procedimiento">Procedimiento</a>
         <a href="#aplicaciones">Aplicaciones</a>
@@ -150,7 +149,7 @@
         </p>
         <div class="hero__acciones">
           <a class="btn btn--primario btn--grande" href="#programa">Abrir la calculadora</a>
-          <a class="btn btn--grande" href="#conceptos">Cómo funciona</a>
+          <a class="btn btn--grande" href="#procedimiento">Cómo funciona</a>
         </div>
       </div>
     </section>
@@ -171,39 +170,6 @@
             mediante el <strong>algoritmo de Dijkstra</strong>, mostrando la secuencia de vértices, el costo total
             y el desarrollo paso a paso del método de etiquetado.
           </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==============================================================
-         CONCEPTOS BÁSICOS
-         ============================================================== -->
-    <section class="seccion" id="conceptos" aria-labelledby="titulo-conceptos">
-      <div class="contenedor">
-        <header class="seccion__cabecera">
-          <h2 id="titulo-conceptos">Conceptos básicos</h2>
-          <p class="seccion__lead">
-            Propuesto por Edsger W. Dijkstra en 1959, el algoritmo calcula la distancia mínima desde un
-            vértice origen hacia todos los demás en un grafo con pesos no negativos.
-          </p>
-        </header>
-        <div class="rejilla rejilla--4">
-          <article class="bloque">
-            <h3>Grafo dirigido ponderado</h3>
-            <p>Vértices unidos por aristas con sentido (i → j) y un peso: distancia, tiempo o costo. Se guarda en una matriz n × n: la fila es el vértice de salida y la columna el de llegada.</p>
-          </article>
-          <article class="bloque">
-            <h3>Camino mínimo</h3>
-            <p>La sucesión de aristas del origen al destino cuya suma de pesos es la menor posible. Puede haber varias rutas con la misma longitud, y el programa las muestra todas.</p>
-          </article>
-          <article class="bloque">
-            <h3>La etiqueta</h3>
-            <p><span class="etq">[peso acumulado, de dónde proviene]<sub>k</sub></span>. Por ejemplo, en <span class="etq">[3, D]<sub>2</sub></span>: 3 es el acumulado, D el vértice del que proviene y 2 la iteración.</p>
-          </article>
-          <article class="bloque">
-            <h3>Complejidad</h3>
-            <p>O(n²): n iteraciones que recorren una fila de n valores de la matriz. No admite pesos negativos.</p>
-          </article>
         </div>
       </div>
     </section>
@@ -355,7 +321,7 @@
               </button>
             </div>
 
-            <div class="lienzo" id="lienzo">
+            <div class="lienzo">
               <svg id="grafo-svg" class="grafo" role="img" aria-label="Grafo dirigido ponderado"></svg>
               <div class="vacio vacio--lienzo" id="grafo-vacio">
                 <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="14" cy="32" r="6"/><circle cx="50" cy="16" r="6"/><circle cx="50" cy="48" r="6"/><path d="M20 30l24-12M20 34l24 12M50 22v20"/></svg>
@@ -427,7 +393,7 @@
           </article>
 
           <!-- ---------- TABLA DE ETIQUETAS ---------- -->
-          <article class="card card--completa" id="card-tabla" aria-labelledby="t-tabla">
+          <article class="card card--completa" aria-labelledby="t-tabla">
             <header class="card__cabecera">
               <span class="card__num card__num--icono" aria-hidden="true">
                 <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>
@@ -597,9 +563,9 @@
   <!-- ================================================================
        SCRIPTS (en este orden: datos, algoritmo, dibujo, interfaz)
        ================================================================ -->
-  <script src="js/matriz.js?v=8" defer></script>
-  <script src="js/dijkstra.js?v=8" defer></script>
-  <script src="js/grafo.js?v=8" defer></script>
-  <script src="js/ui.js?v=8" defer></script>
+  <script src="js/matriz.js?v=9" defer></script>
+  <script src="js/dijkstra.js?v=9" defer></script>
+  <script src="js/grafo.js?v=9" defer></script>
+  <script src="js/ui.js?v=9" defer></script>
 </body>
 </html>

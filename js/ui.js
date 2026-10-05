@@ -736,7 +736,6 @@
       Grafo.mostrarPaso({
         fijos, etiquetados, badges, arbol,
         actual: it.expandido,
-        elegido: it.elegido,
         evaluadas: it.evaluaciones.map((ev) => ({ i: it.expandido, j: ev.v, resultado: ev.resultado })),
       });
     } else {
@@ -808,7 +807,7 @@
             texto = `${calculo} &gt; ${e.previa} → ${etiquetaHTML(e.propuesta, u, k, 'tachada')} se tacha
                      ${e.yaFijado ? `(${N(e.v)} ya estaba fijado)` : '(no mejora el acumulado)'}`;
         }
-        html += `<li class="li--${e.resultado}" style="--k:${idx}"><span class="v">${N(e.v)}:</span> ${texto}</li>`;
+        html += `<li class="li--${e.resultado}"><span class="v">${N(e.v)}:</span> ${texto}</li>`;
       });
       html += '</ul>';
     }
@@ -862,7 +861,7 @@
         pasos.push(`En <span class="v">${N(v)}</span>: ${etiquetaHTML(e.valor, p, e.iter, 'camino')}`);
       }
       pasos.push(`<span class="v">${N(o)}</span> (origen)`);
-      html += `<li class="li--mejora" style="--k:${idx}">${pasos.join(' → ')}</li>`;
+      html += `<li class="li--mejora">${pasos.join(' → ')}</li>`;
     });
     html += '</ul>';
 
@@ -947,7 +946,7 @@
     const res = estado.resultado;
     const d = estado.destino;
     const o = res.origen;
-    const flecha = '<svg class="ruta__f" viewBox="0 0 24 24" aria-hidden="true" style="--k:K"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    const flecha = '<svg class="ruta__f" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
     const distancias = res.distancias.map((dist, v) =>
       `<span class="distancias__item ${v === d ? 'distancias__item--destino' : ''}">${N(v)}: ${Number.isFinite(dist) ? dist : '∞'}</span>`
@@ -971,7 +970,7 @@
     const rutas = estado.caminos.map((camino) =>
       `<div class="ruta" aria-label="${camino.map(N).join(' → ')}">` +
       camino.map((v, idx) =>
-        (idx ? flecha.replace('K', idx) : '') + `<span class="ruta__v" style="--k:${idx}">${N(v)}</span>`
+        (idx ? flecha : '') + `<span class="ruta__v">${N(v)}</span>`
       ).join('') + '</div>'
     ).join('');
     const total = estado.caminos.length;
